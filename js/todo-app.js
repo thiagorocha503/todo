@@ -15,7 +15,9 @@ var TODO_LABEL_ERROR = document.getElementById("invalid-label");
 });
 // load event
 window.addEventListener("load", function () {
-    render();
+    if (localStorage.getItem("todos") != null) {
+        render();
+    }
 });
 function onNew() {
     var input_text = document.getElementById("todo-text").value;
@@ -44,7 +46,7 @@ function showModalClear() {
 function onClear() {
     var noteLocalStorage = new TodoLocalStorage();
     noteLocalStorage.clear();
-    render();
+    document.getElementById("todo-container").innerHTML = "";
     $('#modal-clear').modal('hide');
 }
 // --------- View -------------

@@ -5,6 +5,7 @@ const BTN_CLEAR = document.getElementById("btn-clear");
 const TXT_TODO: HTMLInputElement = document.getElementById("todo-text") as HTMLInputElement;
 const TODO_LABEL_ERROR = document.getElementById("invalid-label");
 //
+
 interface Map {
     [K: string]: any;
 }
@@ -18,7 +19,9 @@ document.getElementById("todo-text")?.addEventListener("keydown", function (ev: 
 });
 // load event
 window.addEventListener("load", function () {
-    render();
+    if(localStorage.getItem("todos") != null){
+        render();
+    }
 });
 
 
@@ -53,7 +56,7 @@ function showModalClear(){
 function onClear(): void {
     let noteLocalStorage = new TodoLocalStorage();
     noteLocalStorage.clear();
-    render();
+    (document.getElementById("todo-container")as HTMLElement).innerHTML = ""
     $('#modal-clear').modal('hide');
 }
 

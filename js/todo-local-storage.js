@@ -4,10 +4,11 @@ var TodoLocalStorage = /** @class */ (function () {
     function TodoLocalStorage() {
     }
     TodoLocalStorage.prototype.getTodos = function () {
-        var _localStorage = localStorage.getItem("notes");
+        var _localStorage = localStorage.getItem("todos");
         if (_localStorage == null) {
             this.setTodos("[]");
             this.setContador(1);
+            _localStorage = localStorage.getItem("todos");
         }
         var dados = JSON.parse(_localStorage);
         var notes = [];
@@ -19,23 +20,23 @@ var TodoLocalStorage = /** @class */ (function () {
         return notes;
     };
     TodoLocalStorage.prototype.setTodos = function (new_notes) {
-        if (localStorage.getItem("notes") == null) {
-            localStorage.setItem("notes", "[]");
+        if (localStorage.getItem("todos") == null) {
+            localStorage.setItem("todos", "[]");
             this.setContador(1);
         }
-        localStorage.setItem("notes", new_notes);
+        localStorage.setItem("todos", new_notes);
     };
     TodoLocalStorage.prototype.getContador = function () {
-        if (localStorage.getItem("contador") == null) {
-            localStorage.setItem("contador", "1");
+        if (localStorage.getItem("todo-counter") == null) {
+            localStorage.setItem("todo-counter", "1");
         }
-        return parseInt(localStorage.getItem("contador"));
+        return parseInt(localStorage.getItem("todo-counter"));
     };
     TodoLocalStorage.prototype.setContador = function (id) {
-        if (localStorage.getItem("contador") == null) {
-            localStorage.setItem("contador", "1");
+        if (localStorage.getItem("todo-counter") == null) {
+            localStorage.setItem("todo-counter", "1");
         }
-        localStorage.setItem("contador", id.toString());
+        localStorage.setItem("todo-counter", id.toString());
     };
     TodoLocalStorage.prototype.add = function (new_todo) {
         var notes = this.getTodos();
@@ -72,7 +73,7 @@ var TodoLocalStorage = /** @class */ (function () {
         }
     };
     TodoLocalStorage.prototype.deleteById = function (id) {
-        var todos = JSON.parse(localStorage.getItem("notes")); // JSON.parse(localStorage.getItem("notes"));
+        var todos = JSON.parse(localStorage.getItem("todos"));
         var length = todos.length;
         for (var i = 0; i < length; i++) {
             if (todos[i]["id"] == id) {

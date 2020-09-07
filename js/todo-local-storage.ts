@@ -1,14 +1,14 @@
-
 // ----------  Localstorage ------------
 class TodoLocalStorage {
 
     constructor() { }
 
     private getTodos(): Array<Todo> {
-        let _localStorage: string = localStorage.getItem("notes") as string;
+        let _localStorage: string = localStorage.getItem("todos") as string;
         if (_localStorage == null) {
             this.setTodos("[]");
             this.setContador(1);
+            _localStorage = localStorage.getItem("todos") as string;
         }
         let dados: Array<any> = JSON.parse(_localStorage);
         let notes: Array<Todo> = [];
@@ -21,25 +21,25 @@ class TodoLocalStorage {
 
     }
     private setTodos(new_notes: string): void {
-        if (localStorage.getItem("notes") == null) {
-            localStorage.setItem("notes", "[]");
+        if (localStorage.getItem("todos") == null) {
+            localStorage.setItem("todos", "[]");
             this.setContador(1);
         }
-        localStorage.setItem("notes", new_notes);
+        localStorage.setItem("todos", new_notes);
     }
 
     private getContador(): number {
-        if (localStorage.getItem("contador") == null) {
-            localStorage.setItem("contador", "1");
+        if (localStorage.getItem("todo-counter") == null) {
+            localStorage.setItem("todo-counter", "1");
         }
-        return parseInt(localStorage.getItem("contador") as string);
+        return parseInt(localStorage.getItem("todo-counter") as string);
     }
 
     private setContador(id: number): void {
-        if (localStorage.getItem("contador") == null) {
-            localStorage.setItem("contador", "1");
+        if (localStorage.getItem("todo-counter") == null) {
+            localStorage.setItem("todo-counter", "1");
         }
-        localStorage.setItem("contador", id.toString());
+        localStorage.setItem("todo-counter", id.toString());
     }
 
     public add(new_todo: Todo): void {
@@ -84,7 +84,7 @@ class TodoLocalStorage {
     }
 
     public deleteById(id: number): void {
-        let todos: Array<Map> = JSON.parse(localStorage.getItem("notes") as string);// JSON.parse(localStorage.getItem("notes"));
+        let todos: Array<Map> = JSON.parse(localStorage.getItem("todos") as string);
         let length: number = todos.length;
         for (let i = 0; i < length; i++) {
             if (todos[i]["id"] == id) {
