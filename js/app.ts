@@ -1,37 +1,34 @@
 const ENTER_KEY: string = "Enter";
 const ID_TODO_MASK = "todo_id_";
 const ID_CHECKBOX_MASK = "checkbox_";
-const TXT_TODO: HTMLInputElement = document.getElementById("todo-text") as HTMLInputElement;
-const TODO_LABEL_ERROR = document.getElementById("invalid-label");
 const TEXT_LIMIT = 100;
 
 interface Map {
     [K: string]: any;
 }
-// ------------- events -----------------------------
-// Enter input note
-document.getElementById("todo-text")?.addEventListener("keydown", function (ev: KeyboardEvent) {
+
+$("#todo-input").on("keydown",(ev)=>{
     if (ev.key == ENTER_KEY) {
         onNew();
     }
 });
-// load event
-window.addEventListener("load", function () {
+
+$(window).on("load", function () {
     if(localStorage.getItem("todos") != null){
         render();
     }
 });
 
 function onNew(): void {
-    let input_text: string = (document.getElementById("todo-text") as HTMLInputElement).value;
-    let new_todo: Todo = new Todo(null, input_text, false);
+    let input_text: string = (document.getElementById("todo-input") as HTMLInputElement).value;
+    let new_todo: Todo = new Todo(null, input_text, false, new Date());
     // clear 
-    TXT_TODO.classList.remove("is-invalid");
-    TODO_LABEL_ERROR?.classList.remove("d-block");
+    $("#todo-input").removeClass("is-invalid")
+    $("#invalid-label").removeClass("d-block")
     
     if (input_text.length == 0) {
-        TXT_TODO.classList.add("is-invalid");
-        TODO_LABEL_ERROR?.classList.add("d-block");
+        $("#todo-input").addClass("is-invalid")
+        $("#invalid-label").addClass("d-block")
         return;
     }
     let noteLocalStorage = new TodoLocalStorage();
@@ -58,8 +55,6 @@ function onClear(): void {
     render();
 }
 
-
-// --------- View -------------
 function buildList(valores: Array<Todo>): HTMLElement| null {
     let todos: Array<Todo> = new TodoLocalStorage().fetchAll();
     if (todos == null) {
@@ -88,108 +83,130 @@ function setTodoDone(id: number, check: boolean) {
     _localStorage.update(todo);
 }
 
-function buildItemList(note: Map): HTMLElement {
+function buildItemList(todo: Map): HTMLElement {
     // todo container
-    let todo_container: HTMLDivElement = document.createElement("div");
-    todo_container.className = "card mt-2";
-    todo_container.setAttribute("id", ID_TODO_MASK + note["id"]);
+    let card: HTMLDivElement = document.createElement("div");
+    card.className = "card mt-2";
+    card.style.cursor = "pointer";
+    card.setAttribute("id", ID_TODO_MASK + todo["id"]);
     // todo content
-    let todo_content: HTMLDivElement = document.createElement("div");
-    todo_content.className = "d-flex p-1 align-items-center p-2";
+    let card_body: HTMLDivElement = document.createElement("div");
+    card_body.className = " card-body d-flex p-1 align-items-center p-2";
+    
+    
+    let leading: HTMLDivElement = document.createElement("div");
+    leading.className = "px-2";
+    
     // checkbox container
-    let checkbox_container: HTMLDivElement = document.createElement("div");
-    checkbox_container.className = "px-2";
- 
     let checkbox_content: HTMLDivElement = document.createElement("div");
     let checkbox_done = document.createElement("input");
     let checkbox_label = document.createElement("label");
     checkbox_content.className = "custom-control custom-checkbox";
-    checkbox_done.setAttribute("id", ID_CHECKBOX_MASK+note["id"]);
+    checkbox_done.setAttribute("id", ID_CHECKBOX_MASK+todo["id"]);
     checkbox_done.className = "custom-control-input";
     checkbox_done.setAttribute("type","checkbox");
     checkbox_label.className = "custom-control-label";
     checkbox_label.innerHTML = "";
-    checkbox_label.setAttribute("for",ID_CHECKBOX_MASK+note["id"]);
-    
-    checkbox_container.appendChild(checkbox_content);
+    checkbox_label.setAttribute("for",ID_CHECKBOX_MASK+todo["id"]);
+  
+    leading.appendChild(checkbox_content);
     checkbox_content.appendChild(checkbox_done);
     checkbox_content.appendChild(checkbox_label);
+    
     // text container
-    let text_container: HTMLDivElement = document.createElement("div");
-    text_container.className = "pr-1 flex-grow-1";
-    let todo_paragraph: HTMLParagraphElement = document.createElement("p");
-    todo_paragraph.innerHTML = note["text"];
-    todo_paragraph.style.wordBreak = "break-word";
-   
-    text_container.appendChild(todo_paragraph);
+    let title: HTMLDivElement = document.createElement("div");
+    title.className = "pr-1 flex-grow-1";
+    let paragraph: HTMLParagraphElement = document.createElement("p");
+    paragraph.innerHTML = todo["text"];
+    paragraph.style.wordBreak = "break-word";
+    title.appendChild(paragraph);
     
     // text input
-    
     let text_input: HTMLInputElement = document.createElement("input");
-    text_input.value = note["text"];
+    text_input.value = todo["text"];
     text_input.classList.add("form-control")
     text_input.style.display = "none";
-    text_input.maxLength = TEXT_LIMIT
-    text_input.addEventListener("keypress",(evt)=>{
-        if(evt.key == ENTER_KEY ){
-            let todo: Todo = new Todo(note["id"], text_input.value.substring(0,TEXT_LIMIT), checkbox_done.checked);
-            let localStorage = new TodoLocalStorage();
-            localStorage.update(todo);
-            render();           
-        }
-    }) 
-    text_input.addEventListener("focusout",()=>{
-        todo_paragraph.style.display = "block";
-        text_input.style.display = "none";
-    })
-    todo_paragraph.addEventListener("click",()=>{
-        todo_paragraph.style.display = "none";
-        text_input.style.display = "block";
-        text_input.focus();
-    });
-    text_container.appendChild(text_input);
-    // Todo button 
-    let button_container: HTMLDivElement = document.createElement("div");
-    button_container.className = "pr-1";
+    text_input.maxLength = TEXT_LIMIT  
+    title.appendChild(text_input);
+    
+    let tralling: HTMLDivElement = document.createElement("div");
+    tralling.className = "pr-1";
     let btn_delete: HTMLButtonElement = document.createElement("button");
     btn_delete.className = "btn text-primary";
     btn_delete.innerHTML = `
         <svg width="15px" color="#007bff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
             <path  style="fill:rgb(0,123,255);" d="M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z"/>
         </svg>`;
-    button_container.appendChild(btn_delete);
+    btn_delete.style.display = "none";
+    let date = document.createElement("p");
+    date.innerHTML =  strDate(new Date(todo["createdAt"]));
+    tralling.appendChild(date)
+    tralling.appendChild(btn_delete);
+    text_input.addEventListener("keypress",(evt)=>{
+        if(evt.key == ENTER_KEY ){
+            let newtodo: Todo = new Todo(
+                todo["id"], 
+                text_input.value.substring(0,TEXT_LIMIT),
+                checkbox_done.checked,
+                todo["createdAt"]
+
+            );
+            let localStorage = new TodoLocalStorage();
+            localStorage.update(newtodo);
+            render();           
+        }
+    }) 
+    text_input.addEventListener("focusout",()=>{
+        paragraph.style.display = "block";
+        text_input.style.display = "none";
+        btn_delete.style.display = "block";
+        
+    })
+    paragraph.addEventListener("click",()=>{
+        paragraph.style.display = "none";
+        text_input.style.display = "block";
+        text_input.focus();
+        btn_delete.style.display = "none";
+        text_input.classList.add("has-focus")
+       
+    });
     // set checkbox
-    if (note["done"] == true) {
-        todo_paragraph.className = "text-todo-done";
-        todo_content.classList.add("todo-done");
+    if (todo["done"] == true) {
+        paragraph.className = "text-todo-done";
+        card_body.classList.add("todo-done");
         checkbox_done.checked = true;
     }
-    // Add listeners
-    btn_delete.addEventListener("click", function () {
-        let id: number = parseInt((todo_container.getAttribute("id") as string).replace(ID_TODO_MASK, ""));
-        new TodoLocalStorage().deleteById(id);
-        render();
-    });
+    btn_delete.addEventListener("click", ()=>{deleteTodo(todo["id"])});
     checkbox_done.addEventListener("change", function () {
         if (this.checked) {
-            todo_paragraph.className = "text-todo-done";
-            todo_content.classList.add("todo-done");
-            setTodoDone(note["id"], true);
+            paragraph.className = "text-todo-done";
+            card_body.classList.add("todo-done");
+            setTodoDone(todo["id"], true);
         } else {
-            todo_paragraph.classList.remove("text-todo-done");
-            todo_content.classList.remove("todo-done");
-            setTodoDone(note["id"], false);
+            paragraph.classList.remove("text-todo-done");
+            card_body.classList.remove("todo-done");
+            setTodoDone(todo["id"], false);
         }
-    });
-    todo_container.style.cursor = "pointer";
-    
+    });  
+    card.addEventListener("mouseenter",()=>{
+        if(!text_input.classList.contains("has-focus")){
+            btn_delete.style.display = "block";
+            date.style.display = "none"
+        }
+       
+    })
+    card.addEventListener("mouseleave",()=>{
+        if(!text_input.classList.contains("has-focus")){
+            btn_delete.style.display = "none";
+            date.style.display = "block";
+        }   
+    })
     // build card
-    todo_container.appendChild(todo_content);
-    todo_content.appendChild(checkbox_container);
-    todo_content.appendChild(text_container);
-   
-    todo_content.appendChild(button_container);
-    return todo_container;
+    card.appendChild(card_body);
+    card_body.appendChild(leading);
+    card_body.appendChild(title);
+    card_body.appendChild(tralling);
+    return card;
 }
 
 function render(): void {
@@ -208,6 +225,12 @@ function render(): void {
     }
     container.appendChild(new_todos);
 
+}
+
+function deleteTodo(id: number) {
+    new TodoLocalStorage().deleteById(id);
+    render();
+    
 }
 /*
     // Todo item

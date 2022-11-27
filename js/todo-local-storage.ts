@@ -54,7 +54,7 @@ class TodoLocalStorage {
         // set datas
         this.setTodos(JSON.stringify(notes));
         this.setContador(id + 1);
-        TXT_TODO.value = "";
+       
     }
 
     public fetchAll(): Array<Todo> {
