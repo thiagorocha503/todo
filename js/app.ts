@@ -55,6 +55,7 @@ function onClear(): void {
     noteLocalStorage.clear();
     (document.getElementById("todo-container")as HTMLElement).innerHTML = ""
     $('#modal-clear').modal('hide');
+    render();
 }
 
 

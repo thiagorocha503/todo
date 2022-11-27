@@ -44,6 +44,7 @@ function onClear() {
     noteLocalStorage.clear();
     document.getElementById("todo-container").innerHTML = "";
     $('#modal-clear').modal('hide');
+    render();
 }
 function buildList(valores) {
     var todos = new TodoLocalStorage().fetchAll();
