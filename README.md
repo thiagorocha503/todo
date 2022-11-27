@@ -13,11 +13,11 @@ The classic To-Do application where a user can write down all the things he want
 
 ## Bonus features
 
--   [ ] User can edit a to-do
+-   [X] User can edit a to-do
 -   [ ] User can see a list with all the completed to-do's
 -   [ ] User can see a list with all the active to-do's
 -   [ ] User can see the date when he created the to-do
--   [ ] When closing the browser window the to-do's will be stored and when the User returns, the data will be retrieved
+-   [x] When closing the browser window the to-do's will be stored and when the User returns, the data will be retrieved
 
 ## Useful links and resources
 
@@ -29,4 +29,3 @@ The classic To-Do application where a user can write down all the things he want
 -   [To Do List on Codepen](https://codepen.io/yesilfasulye/pen/eJIuF) by [Burak Kaya](https://codepen.io/yesilfasulye/)
 -   [Todo App in Plain JavaScript](https://safdarjamal.github.io/todo-app/)
 -   [Todo App in Golang](https://github.com/schadokar/go-to-do-app)
-

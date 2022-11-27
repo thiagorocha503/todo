@@ -1,19 +1,17 @@
-const ENTER_KEY: number = 13;
+const ENTER_KEY: string = "Enter";
 const ID_TODO_MASK = "todo_id_";
 const ID_CHECKBOX_MASK = "checkbox_";
-const BTN_CLEAR = document.getElementById("btn-clear");
 const TXT_TODO: HTMLInputElement = document.getElementById("todo-text") as HTMLInputElement;
 const TODO_LABEL_ERROR = document.getElementById("invalid-label");
-//
+const TEXT_LIMIT = 100;
 
 interface Map {
     [K: string]: any;
 }
-
 // ------------- events -----------------------------
 // Enter input note
 document.getElementById("todo-text")?.addEventListener("keydown", function (ev: KeyboardEvent) {
-    if (ev.keyCode == ENTER_KEY) {
+    if (ev.key == ENTER_KEY) {
         onNew();
     }
 });
@@ -23,7 +21,6 @@ window.addEventListener("load", function () {
         render();
     }
 });
-
 
 function onNew(): void {
     let input_text: string = (document.getElementById("todo-text") as HTMLInputElement).value;
@@ -93,15 +90,15 @@ function setTodoDone(id: number, check: boolean) {
 function buildItemList(note: Map): HTMLElement {
     // todo container
     let todo_container: HTMLDivElement = document.createElement("div");
-    todo_container.className = "card  m-1";
+    todo_container.className = "card mt-2";
     todo_container.setAttribute("id", ID_TODO_MASK + note["id"]);
     // todo content
     let todo_content: HTMLDivElement = document.createElement("div");
-    todo_content.className = "d-flex p-1 align-items-center";
+    todo_content.className = "d-flex p-1 align-items-center p-2";
     // checkbox container
     let checkbox_container: HTMLDivElement = document.createElement("div");
     checkbox_container.className = "px-2";
-    
+ 
     let checkbox_content: HTMLDivElement = document.createElement("div");
     let checkbox_done = document.createElement("input");
     let checkbox_label = document.createElement("label");
@@ -122,7 +119,34 @@ function buildItemList(note: Map): HTMLElement {
     let todo_paragraph: HTMLParagraphElement = document.createElement("p");
     todo_paragraph.innerHTML = note["text"];
     todo_paragraph.style.wordBreak = "break-word";
+   
     text_container.appendChild(todo_paragraph);
+    
+    // text input
+    
+    let text_input: HTMLInputElement = document.createElement("input");
+    text_input.value = note["text"];
+    text_input.classList.add("form-control")
+    text_input.style.display = "none";
+    text_input.maxLength = TEXT_LIMIT
+    text_input.addEventListener("keypress",(evt)=>{
+        if(evt.key == ENTER_KEY ){
+            let todo: Todo = new Todo(note["id"], text_input.value.substring(0,TEXT_LIMIT), checkbox_done.checked);
+            let localStorage = new TodoLocalStorage();
+            localStorage.update(todo);
+            render();           
+        }
+    }) 
+    text_input.addEventListener("focusout",()=>{
+        todo_paragraph.style.display = "block";
+        text_input.style.display = "none";
+    })
+    todo_paragraph.addEventListener("click",()=>{
+        todo_paragraph.style.display = "none";
+        text_input.style.display = "block";
+        text_input.focus();
+    });
+    text_container.appendChild(text_input);
     // Todo button 
     let button_container: HTMLDivElement = document.createElement("div");
     button_container.className = "pr-1";
@@ -156,25 +180,27 @@ function buildItemList(note: Map): HTMLElement {
             setTodoDone(note["id"], false);
         }
     });
-    // monta todo
+    todo_container.style.cursor = "pointer";
+    
+    // build card
     todo_container.appendChild(todo_content);
     todo_content.appendChild(checkbox_container);
     todo_content.appendChild(text_container);
+   
     todo_content.appendChild(button_container);
     return todo_container;
 }
 
 function render(): void {
-    //console.log(">> render");
     let container: HTMLElement = document.getElementById("todo-container") as HTMLElement;
     // limpa lista anterior
     container.innerHTML = "";
-    BTN_CLEAR?.classList.add("d-none");
     let todos: Array<Todo> = new TodoLocalStorage().fetchAll();
     if (todos == null || todos.length == 0) {
+        $("#button-container").addClass("d-none")
         return;
     }
-    BTN_CLEAR?.classList.remove("d-none");
+    $("#button-container").removeClass("d-none");
     let new_todos = buildList(todos);
     if(new_todos == null){
         return;
@@ -182,7 +208,6 @@ function render(): void {
     container.appendChild(new_todos);
 
 }
-BTN_CLEAR?.classList.add("d-none");
 /*
     // Todo item
     <div class="card p-1 m-1">

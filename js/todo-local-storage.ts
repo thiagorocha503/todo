@@ -17,6 +17,9 @@ class TodoLocalStorage {
             let new_note: Todo = dados[i];
             notes.push(new_note);
         }
+        notes.sort((a: Todo, b: Todo) =>{
+            return  (b.id ?? 0) - (a.id ?? 0);
+        });
         return notes;
 
     }
