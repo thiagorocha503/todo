@@ -6,6 +6,7 @@ var TEXT_LIMIT = 100;
 $("#todo-input").on("keydown", function (ev) {
     if (ev.key == ENTER_KEY) {
         onNew();
+        $("#todo-input").val("");
     }
 });
 $(window).on("load", function () {
@@ -14,7 +15,7 @@ $(window).on("load", function () {
     }
 });
 function onNew() {
-    var input_text = document.getElementById("todo-input").value;
+    var input_text = $("#todo-input").val();
     var new_todo = new Todo(null, input_text, false, new Date());
     $("#todo-input").removeClass("is-invalid");
     $("#invalid-label").removeClass("d-block");

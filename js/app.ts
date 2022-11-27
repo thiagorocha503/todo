@@ -10,6 +10,7 @@ interface Map {
 $("#todo-input").on("keydown",(ev)=>{
     if (ev.key == ENTER_KEY) {
         onNew();
+        $("#todo-input").val("")
     }
 });
 
@@ -20,7 +21,7 @@ $(window).on("load", function () {
 });
 
 function onNew(): void {
-    let input_text: string = (document.getElementById("todo-input") as HTMLInputElement).value;
+    let input_text: string = $("#todo-input").val() as string;
     let new_todo: Todo = new Todo(null, input_text, false, new Date());
     // clear 
     $("#todo-input").removeClass("is-invalid")
