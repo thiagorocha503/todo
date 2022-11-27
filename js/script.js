@@ -1,15 +1,4 @@
 "use strict";
-var Todo = (function () {
-    function Todo(id, text, done) {
-        if (id === void 0) { id = 0; }
-        if (text === void 0) { text = ""; }
-        if (done === void 0) { done = false; }
-        this.id = id;
-        this.text = text;
-        this.done = done;
-    }
-    return Todo;
-}());
 var _a;
 var ENTER_KEY = "Enter";
 var ID_TODO_MASK = "todo_id_";
@@ -182,6 +171,17 @@ function render() {
     }
     container.appendChild(new_todos);
 }
+var Todo = (function () {
+    function Todo(id, text, done) {
+        if (id === void 0) { id = 0; }
+        if (text === void 0) { text = ""; }
+        if (done === void 0) { done = false; }
+        this.id = id;
+        this.text = text;
+        this.done = done;
+    }
+    return Todo;
+}());
 var TodoLocalStorage = (function () {
     function TodoLocalStorage() {
     }
