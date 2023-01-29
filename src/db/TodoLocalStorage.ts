@@ -1,11 +1,9 @@
-// ----------  Localstorage ------------
-class TodoLocalStorage {
+import { Todo } from "../model/Todo";
 
-    constructor() { }
-
+export default class TodoLocalStorage {
     private getTodos(): Array<Todo> {
         let _localStorage: string = localStorage.getItem("todos") as string;
-        if (_localStorage == null) {
+        if (_localStorage === null) {
             this.setTodos("[]");
             this.setContador(1);
             _localStorage = localStorage.getItem("todos") as string;
@@ -17,18 +15,20 @@ class TodoLocalStorage {
             let new_note: Todo = dados[i];
             notes.push(new_note);
         }
-        notes.sort((a: Todo, b: Todo) =>{
-            return  (b.id ?? 0) - (a.id ?? 0);
+        notes.sort((a: Todo, b: Todo) => {
+            return (b.id ?? 0) - (a.id ?? 0);
+        });
+        notes.sort((todo: Todo) => {
+            return todo.done ? 1 : -1;
         });
         return notes;
-
     }
-    private setTodos(new_notes: string): void {
-        if (localStorage.getItem("todos") == null) {
+    private setTodos(todos: string): void {
+        if (localStorage.getItem("todos") === null) {
             localStorage.setItem("todos", "[]");
             this.setContador(1);
         }
-        localStorage.setItem("todos", new_notes);
+        localStorage.setItem("todos", todos);
     }
 
     private getContador(): number {
@@ -39,22 +39,21 @@ class TodoLocalStorage {
     }
 
     private setContador(id: number): void {
-        if (localStorage.getItem("todo-counter") == null) {
+        if (localStorage.getItem("todo-counter") === null) {
             localStorage.setItem("todo-counter", "1");
         }
         localStorage.setItem("todo-counter", id.toString());
     }
 
-    public add(new_todo: Todo): void {
+    public add(todo: Todo): void {
         let notes: Array<Todo> = this.getTodos();
 
         let id: number = this.getContador();
-        new_todo.id = id;
-        notes.push(new_todo);
+        todo.id = id;
+        notes.push(todo);
         // set datas
         this.setTodos(JSON.stringify(notes));
         this.setContador(id + 1);
-       
     }
 
     public fetchAll(): Array<Todo> {
@@ -65,42 +64,38 @@ class TodoLocalStorage {
         let todos: Array<Todo> = this.getTodos();
         let length: number = todos.length;
         for (let i = 0; i < length; i++) {
-            if (todos[i].id == id) {
+            if (todos[i].id === id) {
                 return todos[i];
             }
         }
         return null;
-
     }
 
-    public update(note_update: Todo): void {
+    public update(todo: Todo): void {
         let todos: Array<Todo> = this.getTodos();
         let length: number = todos.length;
         for (let i = 0; i < length; i++) {
-            if (todos[i].id == note_update.id) {
-                todos[i] = note_update;
+            if (todos[i].id === todo.id) {
+                todos[i] = todo;
                 this.setTodos(JSON.stringify(todos));
                 break;
             }
         }
-
     }
 
     public deleteById(id: number): void {
-        let todos: Array<Map> = JSON.parse(localStorage.getItem("todos") as string);
+        let todos = JSON.parse(localStorage.getItem("todos") as string);
         let length: number = todos.length;
         for (let i = 0; i < length; i++) {
-            if (todos[i]["id"] == id) {
+            if (todos[i]["id"] === id) {
                 todos.splice(i, 1);
                 break;
             }
         }
         this.setTodos(JSON.stringify(todos));
-
     }
 
     public clear(): void {
         localStorage.clear();
-
     }
 }
